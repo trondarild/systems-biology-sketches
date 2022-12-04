@@ -1,0 +1,50 @@
+# File gillespie2.ode
+# Gillespie stochastic simulation for short reaction chain (-> s1 -> s2 ->)
+#
+# set kinetic parameters
+#
+par v0=20, k1=1, k2=2
+#
+# initialize concentrations and time
+#
+init S1=0, S2=0, tr=0
+#
+# set reaction propensities 
+#
+a0=v0
+a1=k1*s1
+a2=k2*s2
+#
+# determine the total of all propensities
+#
+a_total=a0+a1+a2
+#
+# set the update rule for tr 
+tr'=tr+log(1/ran(1))/a_total
+#
+# determine cumulative reaction probabilities (note, p2=1)
+p0=a0/a_total
+p1=(a0+a1)/a_total
+p2=(a0+a1+a2)/a_total
+# select next reaction to occur:
+# first generate a random number between 0 and 1
+s=ran(1)
+#next, compares this number with the cumulative distribution: 
+z0=(0<=s)&(s<p0)
+z1=(p0<=s)&(s<p1)
+z2=(p1<=s)&(s<=p2)
+#note, the statements (0<=s) and (s<p2) are not technically needed, since they are always true (since p2=1).
+#
+# the preceding conditions are mutually exclusive; the non-zero "z" variables indicates the next reaction 
+#
+# set the update rule for the molecule counts 
+s1'=max(0,s1 + z0 - z1)
+s2'=max(0, s2 + z1 - z2)
+#
+# set internal parameters
+@ bounds=500, maxstore=100000 
+@ meth=discrete, total=10000 
+@ xp=tr,yp=s1,xlo=0,xhi=20,ylo=0,yhi=75
+#
+done
+#

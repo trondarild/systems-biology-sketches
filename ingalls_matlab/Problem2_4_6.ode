@@ -1,0 +1,13 @@
+#File Problem2_4_6.ode
+#Problem 2.4.6
+
+par k=1
+
+c'=k*(-c+1)
+
+init c=0
+
+# the initial condition and the value of parameter k can be 
+# changed in the XPPAUT GUI
+
+done
